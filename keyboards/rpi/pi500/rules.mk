@@ -3,3 +3,4 @@
 # See UART_TX_PIN in config.h
 #UART_DRIVER_REQUIRED = yes # Used for debug via a gpio pin
 #CONSOLE_ENABLE = yes # Enables printf and dprintf
+BOOTMAGIC_ENABLE = no
