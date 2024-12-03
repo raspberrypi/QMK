@@ -9,11 +9,10 @@
  */
 
 // Double tap reset to go into bootloader definitions:
-#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET
-#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_TIMEOUT 500U
+#define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_TIMEOUT 0
 
 // Sets the flash to run in DSPI mode rather than QSPI
-#define RP2040_FLASH_W25X10CL 
+#define RP2040_FLASH_W25X10CL
 
 // Crucial to the function of the keyboard when the Pi is off. Ignores USB
 #define NO_USB_STARTUP_CHECK
