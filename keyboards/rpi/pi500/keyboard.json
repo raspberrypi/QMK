@@ -3,7 +3,7 @@
     "manufacturer": "Raspberry Pi Ltd",
     "maintainer": "Raspberry Pi",
     "features": {
-        "bootmagic": true,
+        "bootmagic": false,
         "console": false,
         "extrakey": true,
         "mousekey": true,
