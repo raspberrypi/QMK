@@ -15,9 +15,6 @@
 // Sets the flash to run in DSPI mode rather than QSPI
 #define RP2040_FLASH_W25X10CL 
 
-#define MATRIX_ROWS 8
-#define MATRIC_COLS 16
-
 // Crucial to the function of the keyboard when the Pi is off. Ignores USB
 #define NO_USB_STARTUP_CHECK
 
