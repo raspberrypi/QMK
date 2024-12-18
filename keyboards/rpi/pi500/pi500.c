@@ -48,16 +48,17 @@ void keyboard_pre_init_kb(void){
 #if WANT_UART_LOGGING
     uart_init(115200);
     print_set_sendchar(uart_sendchar);
-    printf("Starting keyboard\n");
+    dprintf("Starting keyboard\n");
 #endif
 }
 
 // This enables the /dev/hidrawX via USB which requires the hid_listen program to read debug https://www.pjrc.com/teensy/hid_listen.html
 // If the uart is enabled it replaces the USB logging and you won't see anything
-// dprintf doesn't work without this
-#if CONSOLE_ENABLE
+// dprintf doesn't work without DEBUG_ENABLE defined
+#ifdef DEBUG_ENABLE
 void keyboard_post_init_user(void) {
     debug_enable = true;
+    debug_matrix = true;
 }
 #endif
 
@@ -90,7 +91,7 @@ static const char *boot_key_name(uint8_t bit_code) {
 }
 
 static void resend_key_down(uint8_t bit_code) {
-    printf("Resending %s down\n", boot_key_name(bit_code));
+    dprintf("Resending %s down\n", boot_key_name(bit_code));
     switch(bit_code) {
         case BOOT_KEY_SPACE:
             SEND_STRING(SS_UP(X_SPACE) SS_DOWN(X_SPACE));
@@ -115,11 +116,11 @@ void housekeeping_task_kb(void) {
     if (!done_first_run || host_keyboard_led_state().caps_lock != last_caps_lock) {
         last_caps_lock = host_keyboard_led_state().caps_lock;
         if (last_caps_lock) {
-            printf("Caps on\n");
+            dprintf("Caps on\n");
             writePin(CAPS_LED, 1);
         }
         else {
-            printf("Caps off\n");
+            dprintf("Caps off\n");
             writePin(CAPS_LED, 0);
         }
     }
@@ -137,7 +138,7 @@ void housekeeping_task_kb(void) {
     // Detect whether the host we're connected to seems to be running
     if (!usb_active && USB_DRIVER.state == USB_ACTIVE) {
         usb_active = true;
-        printf("Device powered up\n");
+        dprintf("Device powered up\n");
         // Some keys are used at boot by net install
         // But as the keyboard is powered up before the host it will miss key down events
         // so resend them when we have detected the host is becoming active
@@ -153,7 +154,7 @@ void housekeeping_task_kb(void) {
         }
     } else if (usb_active && USB_DRIVER.state != USB_ACTIVE) {
         usb_active = false;
-        printf("Device powered down\n");
+        dprintf("Device powered down\n");
     }
     done_first_run = true; 
 }
@@ -178,24 +179,23 @@ static void record_boot_key(int key_code, bool pressed) {
     } else {
         boot_key_down &= ~bit_code;
     }
-    printf("%s %s\n", boot_key_name(bit_code), pressed ? "down" : "up");
+    dprintf("%s %s\n", boot_key_name(bit_code), pressed ? "down" : "up");
 }
 
 // This function runs when a key event happens
 bool process_record_kb(uint16_t key_code, keyrecord_t *record) { // Custom keycode handling
 #if WANT_UART_LOGGING
     if (record->event.pressed) {
-        printf("Pressed: %u\n", key_code);
+        dprintf("Pressed: %u\n", key_code);
     }
 #endif
     switch(key_code) {
-        // "Pressing" the power button. This is required because we want the power key to only work when its held down for a set amount of
         case RPI_PWR:
             if (record->event.pressed) {
-                printf("Power key down usb=%d\n", usb_active);
+                dprintf("Power key down usb=%d\n", usb_active);
                 press_power_button(true);
             } else {
-                printf("Power key up usb=%d\n", usb_active);
+                dprintf("Power key up usb=%d\n", usb_active);
                 press_power_button(false);
             }
             return false;
