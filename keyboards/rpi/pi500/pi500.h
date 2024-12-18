@@ -46,6 +46,9 @@ enum rpi_keycodes{
 #define BOOT_KEY_SHIFT_LEFT 0x2
 #define BOOT_KEY_SHIFT_RIGHT 0x4
 
+// Whether we want debug
+//#define DEBUG_ENABLE
+
 // Whether we are logging via the uart
 // see UART_TX_PIN in config.h
 #if HAL_USE_SIO
