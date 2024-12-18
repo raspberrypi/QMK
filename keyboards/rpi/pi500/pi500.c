@@ -23,6 +23,7 @@
 #include "uart.h"
 #endif
 
+static bool pwr_button_pressed;
 static uint8_t boot_key_down; // Special key pressed on boot
 static bool usb_active;
 
@@ -40,7 +41,18 @@ static int8_t uart_sendchar(uint8_t c)
 
 // Runs before the QMK main loop begins
 void keyboard_pre_init_kb(void){
-    setPinInput(PWR_BTN); //High z
+    setPinOutput(GP20); // Top Right (Power) Key Column
+    writePin(GP20, 1);
+    setPinInput(GP6); // Top Right (Power) Key Row
+    if (readPin(GP6)) {
+        setPinOutput(PWR_BTN);
+        writePin(PWR_BTN, 1); // 'Press' Power Button 
+        pwr_button_pressed = true;
+    }
+    else {
+        setPinInput(PWR_BTN);
+        pwr_button_pressed = false;
+    }
     setPinOutput(LED_PIN);
     setPinOutput(CAPS_LED);
     keyboard_pre_init_user();
@@ -64,16 +76,15 @@ void keyboard_post_init_user(void) {
 
 // The power button is a custom key. To actually activate the power "button" we have to fiddle with a gpio
 static void press_power_button(bool press) {
-    static bool button_pressed; // avoid calling this repeatedbly
-    if (press && !button_pressed) {
-        printf("Power button pressed\n");
+    if (press && !pwr_button_pressed) {
+        dprintf("Power button pressed\n");
         setPinOutput(PWR_BTN);
         writePin(PWR_BTN, 1); // 'Press' Power Button
-        button_pressed = true;
-    } else if (!press && button_pressed) {
-        printf("Power button released\n");
-        setPinInput(PWR_BTN); // High z
-        button_pressed = false;
+        pwr_button_pressed = true;
+    } else if (!press && pwr_button_pressed) {
+        dprintf("Power button released\n");
+        setPinInput(PWR_BTN); // 'Release' Power Button
+        pwr_button_pressed = false;
     }
 }
 
