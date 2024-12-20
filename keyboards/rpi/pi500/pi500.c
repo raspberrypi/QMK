@@ -39,19 +39,30 @@ static int8_t uart_sendchar(uint8_t c)
 }
 #endif
 
+// The power button is a custom key. To actually activate the power "button" we have to fiddle with a gpio
+static void press_power_button(bool press) {
+    if (press && !pwr_button_pressed) {
+        dprintf("Power button pressed\n");
+        setPinOutput(PWR_BTN);
+        writePin(PWR_BTN, 1); // 'Press' Power Button
+        pwr_button_pressed = true;
+    } else if (!press && pwr_button_pressed) {
+        dprintf("Power button released\n");
+        setPinInput(PWR_BTN); // 'Release' Power Button
+        pwr_button_pressed = false;
+    }
+}
+
 // Runs before the QMK main loop begins
 void keyboard_pre_init_kb(void){
     setPinOutput(GP20); // Top Right (Power) Key Column
     writePin(GP20, 1);
     setPinInput(GP6); // Top Right (Power) Key Row
     if (readPin(GP6)) {
-        setPinOutput(PWR_BTN);
-        writePin(PWR_BTN, 1); // 'Press' Power Button 
-        pwr_button_pressed = true;
+        press_power_button(true);
     }
     else {
-        setPinInput(PWR_BTN);
-        pwr_button_pressed = false;
+        press_power_button(false);
     }
     setPinOutput(LED_PIN);
     setPinOutput(CAPS_LED);
@@ -73,20 +84,6 @@ void keyboard_post_init_user(void) {
     debug_matrix = true;
 }
 #endif
-
-// The power button is a custom key. To actually activate the power "button" we have to fiddle with a gpio
-static void press_power_button(bool press) {
-    if (press && !pwr_button_pressed) {
-        dprintf("Power button pressed\n");
-        setPinOutput(PWR_BTN);
-        writePin(PWR_BTN, 1); // 'Press' Power Button
-        pwr_button_pressed = true;
-    } else if (!press && pwr_button_pressed) {
-        dprintf("Power button released\n");
-        setPinInput(PWR_BTN); // 'Release' Power Button
-        pwr_button_pressed = false;
-    }
-}
 
 static const char *boot_key_name(uint8_t bit_code) {
     switch(bit_code) {
