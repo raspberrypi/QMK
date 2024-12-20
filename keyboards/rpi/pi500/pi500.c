@@ -58,12 +58,7 @@ void keyboard_pre_init_kb(void){
     setPinOutput(GP20); // Top Right (Power) Key Column
     writePin(GP20, 1);
     setPinInput(GP6); // Top Right (Power) Key Row
-    if (readPin(GP6)) {
-        press_power_button(true);
-    }
-    else {
-        press_power_button(false);
-    }
+    press_power_button(readPin(GP6));
     setPinOutput(LED_PIN);
     setPinOutput(CAPS_LED);
     keyboard_pre_init_user();
