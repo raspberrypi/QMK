@@ -1,0 +1,25 @@
+{
+    "manufacturer": "Raspberry Pi Ltd",
+    "maintainer": "Raspberry Pi",
+    "features": {
+        "bootmagic": false,
+        "console": false,
+        "extrakey": true,
+        "mousekey": false,
+        "nkro": true,
+        "rgb_matrix": true
+    },
+    "usb": {
+        "vid": "0x2E8A",
+        "pid": "0x0011",
+        "device_version": "1.1.1",
+        "no_startup_check": true
+    },
+    "matrix_pins": {
+        "cols": ["GP0", "GP1", "GP2", "GP3", "GP4", "GP5", "GP25", "GP10", "GP11", "GP17", "GP23", "GP22", "GP21", "GP20", "GP19", "GP18"],
+        "rows": ["GP9", "GP8", "GP7", "GP6", "GP16", "GP24"]
+    },
+    "processor": "RP2040",
+    "bootloader": "rp2040",
+    "diode_direction": "ROW2COL"
+}
